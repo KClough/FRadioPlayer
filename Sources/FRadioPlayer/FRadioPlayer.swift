@@ -155,6 +155,9 @@ open class FRadioPlayer: NSObject {
     
     /// The player starts playing when the radioURL property gets set. (default == true)
     open var isAutoPlay = true
+
+    /// Always reload / return to live on interruptions
+    open var isKeepLive = true
     
     /// Enable fetching albums artwork from the iTunes API. (default == true)
     open var enableArtwork = true
@@ -512,8 +515,8 @@ open class FRadioPlayer: NSObject {
         
         // Wait 1 sec to recheck and make sure the reload is needed
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
-            if !item.isPlaybackLikelyToKeepUp { self.reloadItem() }
-            self.isPlaying ? self.player?.play() : self.player?.pause()
+            if self.isKeepLive || !item.isPlaybackLikelyToKeepUp { self.reloadItem() }
+            self.isPlaying || self.isKeepLive ? self.player?.play() : self.player?.pause()
         }
     }
     
